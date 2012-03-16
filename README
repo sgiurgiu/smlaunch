@@ -1,0 +1,6 @@
+Simple Media Launcher
+----------------------------
+
+The purpose of this program is to be a server that listens for commands from a client that tells it what media file to launch on the server.
+It was created to be able to make Raspberry Pi into a perfect multimedia server, without the need to use XMBC or other things.
+We don't have many features, nor a UI, we aim to be as fast as possible , using as little memory as possible.
