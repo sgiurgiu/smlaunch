@@ -20,7 +20,9 @@ smlaunch_SOURCES = \
 	client.c \
 	client.h \
 	log.c \
-	log.h
+	log.h \
+	player.c \
+	player.h
 
 smlaunch_LDFLAGS = 
 

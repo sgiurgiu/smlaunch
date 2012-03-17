@@ -28,11 +28,15 @@
 
 #include "log.h"
 #include "utils.h"
+#include "player.h"
 
 #define MAX_PATH 1024
 
 #define START_VIDEO 1
 #define LIST_FILES 2
+#define PAUSE 3
+#define RESUME 4
+
 
 void client_thread(void* clientfd_pointer);
 void play_file(const char* file);
@@ -79,6 +83,12 @@ void execute_command(unsigned char command,int clientfd)
 		case LIST_FILES:
 			list_files("/mnt/media/Movies",clientfd,0);		
 			break;
+		case PAUSE:
+			player_pause(player_pid);
+			break;
+		case RESUME:
+			player_resume(player_pid);
+			break;
 		default:
 			sm_log(LOG_DEBUG,"Unkown command %d\n",command);
 			break;
@@ -101,30 +111,8 @@ void handle_client(int clientFd)
 void play_file(const char* file)
 {
 	sm_log(LOG_DEBUG,"will be playing file %s\n",file);
-	pid_t child=fork();	
-	if(child==0)
-	{
-		//the child here
-		const char* player="/usr/bin/gnome-mplayer";//TODO: get this in some option of some kind
-		char *const args[]={(char*)player,"-q","--fullscreen",(char*)file,(char*)NULL};
-		//int res=execl(player,player,file,(char*)NULL);
-		int res=execv(player,args);		
-		if(res==-1)
-		{
-			error("ERROR: unable to launch process ");
-		}
-	}
-	else
-	{
-		if(player_pid!=-1)
-		{
-			kill(player_pid,SIGTERM);
-		}
-		player_pid=child;//we can only have 1 player running at a time
-		//the parent
-		//remember the pid of the child maybe, so we can control it 
-		//later?
-	}
+	
+	player_pid=player_play(file,player_pid);//we can only have 1 player running at a time	
 }
 
 void list_files(const char* path,int clientfd,int level)

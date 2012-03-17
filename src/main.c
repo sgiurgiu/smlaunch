@@ -31,6 +31,7 @@
 #include "log.h"
 #include "utils.h"
 #include "client.h"
+#include "player.h"
 
 #define PORT 15016
 
@@ -48,7 +49,8 @@ int main(int argc, char** argv)
 	openlog("smlaunch",LOG_CONS|LOG_PID,LOG_USER);	
 	setlogmask(LOG_DEBUG);
 	sm_log(LOG_INFO,"starting %s server\n",argv[0]);
-
+	player_init();
+	
 	//TODO: make this an option of some kind
 	//actually...not setting this will be an option
 	//daemon(0,0);
