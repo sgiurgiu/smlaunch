@@ -135,18 +135,14 @@ void list_files(const char* path,int clientfd,int level)
 				//to account for 1 / char
 				full_cpath_len=pathlen+strlen(dp->d_name)+2;
 				full_cpath=(char*)malloc(full_cpath_len*sizeof(char));
-				strcpy(full_cpath,path);
-				strcat(full_cpath,"/");
-				strcat(full_cpath,dp->d_name);
+				sprintf(full_cpath,"%s/%s",path,dp->d_name);
 				list_files (full_cpath,clientfd,level+1);
 				free(full_cpath);
 				break;
 			case DT_REG:
 				full_cpath_len=pathlen+strlen(dp->d_name)+2;
 				full_cpath=(char*)malloc(full_cpath_len*sizeof(char));
-				strcpy(full_cpath,path);
-				strcat(full_cpath,"/");
-				strcat(full_cpath,dp->d_name);
+				sprintf(full_cpath,"%s/%s",path,dp->d_name);
 				write(clientfd,&full_cpath_len,sizeof(size_t));
 				write(clientfd,full_cpath,full_cpath_len);
 				//printf("%s\n", full_cpath);
