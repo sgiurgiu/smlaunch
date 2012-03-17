@@ -1,20 +1,19 @@
 
 [Anjuta]
 Maximized=1
-Geometry=1920x1143+0+0
-
-[File Loader]
-Files=file:///home/sergiu/projects/smlaunch/src/main.c#46%%%file:///home/sergiu/projects/smlaunch/src/log.c#31%%%file:///home/sergiu/projects/smlaunch/src/client.c#79%%%file:///home/sergiu/projects/smlaunch/src/utils.c#32%%%file:///home/sergiu/projects/smlaunch/src/utils.h#27
-
-[Document Manager]
-bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
+Geometry=1920x1150+0+0
 
 [Project Manager]
 Shortcut=smlaunch//smlaunch//src//smlaunch
 Expand=smlaunch%%%smlaunch//smlaunch%%%smlaunch//smlaunch//src%%%smlaunch//smlaunch//src//smlaunch%%%smlaunch//SMLAUNCH
 
+[File Loader]
+Files=file:///home/sergiu/projects/smlaunch/src/main.c#46%%%file:///home/sergiu/projects/smlaunch/src/log.c#31%%%file:///home/sergiu/projects/smlaunch/src/client.c#71%%%file:///home/sergiu/projects/smlaunch/src/utils.h#21
+
+[Document Manager]
+bookmarks=<?xml version="1.0" encoding="UTF-8"?>\n<bookmarks/>\n
+
 [Execution]
-Program arguments=
 Program uri=file:///home/sergiu/projects/smlaunch/Debug/src/smlaunch
 Run in terminal=2
 Working directories=file:///home/sergiu/projects/smlaunch

@@ -43,7 +43,7 @@ void start_listening();
 
 int main(int argc, char** argv)
 {
-	signal(SIGINT,signal_handler);
+	signal(SIGINT,signal_handler);//TODO: OBSOLETE, use sigaction
 	signal(SIGTERM,signal_handler);
 	openlog("smlaunch",LOG_CONS|LOG_PID,LOG_USER);	
 	setlogmask(LOG_DEBUG);

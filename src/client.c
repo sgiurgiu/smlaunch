@@ -21,6 +21,10 @@
 #include <unistd.h>
 #include <syslog.h>
 #include <pthread.h>
+#include <dirent.h>
+#include <string.h>
+#include <stdlib.h>
+#include <signal.h>
 
 #include "log.h"
 #include "utils.h"
@@ -28,10 +32,14 @@
 #define MAX_PATH 1024
 
 #define START_VIDEO 1
+#define LIST_FILES 2
 
 void client_thread(void* clientfd_pointer);
 void play_file(const char* file);
 void execute_command(unsigned char command,int clientfd);
+void list_files(const char* path,int clientfd,int level);
+
+pid_t player_pid=-1;
 
 void client_thread(void* clientfd_pointer)
 {
@@ -67,6 +75,9 @@ void execute_command(unsigned char command,int clientfd)
 			}
 			path[fileLen]=NULL;
 			play_file((const char*)path);
+			break;
+		case LIST_FILES:
+			list_files("/mnt/media/Movies",clientfd,0);		
 			break;
 		default:
 			sm_log(LOG_DEBUG,"Unkown command %d\n",command);
@@ -105,6 +116,60 @@ void play_file(const char* file)
 	}
 	else
 	{
-		//the parent...just go away, maybe log something
+		if(player_pid!=-1)
+		{
+			kill(player_pid,SIGTERM);
+		}
+		player_pid=child;//we can only have 1 player running at a time
+		//the parent
+		//remember the pid of the child maybe, so we can control it 
+		//later?
+	}
+}
+
+void list_files(const char* path,int clientfd,int level)
+{
+	struct dirent *dp;
+	size_t full_cpath_len=0;
+	char* full_cpath=0;
+	//sm_log(LOG_DEBUG,"listing %s\n",path);
+	size_t pathlen=strlen(path);
+	DIR *dir=opendir(path);	
+	while ((dp=readdir(dir)) != NULL) {
+		unsigned char type=dp->d_type;//Linux and BSD systems
+		switch(type)
+		{
+			case DT_DIR:
+				if(!strcmp(".",dp->d_name) ||!strcmp("..",dp->d_name))
+				{
+					continue;
+				}
+				//to account for 1 / char
+				full_cpath_len=pathlen+strlen(dp->d_name)+2;
+				full_cpath=(char*)malloc(full_cpath_len*sizeof(char));
+				strcpy(full_cpath,path);
+				strcat(full_cpath,"/");
+				strcat(full_cpath,dp->d_name);
+				list_files (full_cpath,clientfd,level+1);
+				free(full_cpath);
+				break;
+			case DT_REG:
+				full_cpath_len=pathlen+strlen(dp->d_name)+2;
+				full_cpath=(char*)malloc(full_cpath_len*sizeof(char));
+				strcpy(full_cpath,path);
+				strcat(full_cpath,"/");
+				strcat(full_cpath,dp->d_name);
+				write(clientfd,&full_cpath_len,sizeof(size_t));
+				write(clientfd,full_cpath,full_cpath_len);
+				//printf("%s\n", full_cpath);
+				free(full_cpath);
+				break;
+		};		
+	}
+	closedir(dir);
+	full_cpath_len=0;
+	if(level==0)
+	{
+		write(clientfd,&full_cpath_len,sizeof(size_t));
 	}
 }
